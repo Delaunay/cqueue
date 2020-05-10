@@ -430,7 +430,7 @@ class Protected(object):
         self.handlers[signal.SIGTERM] = signal.signal(signal.SIGTERM, self.handler)
 
     def handler(self, sig, frame):
-        warning(f'Delaying signal to finish operations')
+        warning(f'Delaying signal {sig} to finish operations')
         self.signal_received = (sig, frame)
 
     def __exit__(self, type, value, traceback):
@@ -439,7 +439,10 @@ class Protected(object):
 
         if self.signal_received:
             warning(f'Termination was delayed by {time.time() - self.start:.4f} s')
-            self.handlers[self.signal_received[0]](*self.signal_received)
+            handler = self.handlers[self.signal_received[0]]
+
+            if callable(handler):
+                handler(*self.signal_received)
 
 
 class ActionRecord:
