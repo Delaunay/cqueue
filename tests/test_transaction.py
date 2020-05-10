@@ -52,7 +52,7 @@ kill_early_signals = [
 
 
 @pytest.mark.parametrize('signal', kill_early_signals)
-def test_check_sigkill_nothing_happen(signal):
+def test_check_sigkill_nothing_happened(signal):
     client = new_client(URI, DATABASE)
     client.db[QUEUE].drop()
     client.push(QUEUE, NAMESPACE, {'my_work': 0})
@@ -90,7 +90,6 @@ def test_check_sigterm_everything_finished(signal):
     # Should not be able to kill it until the end of the thread
     p.join()
 
-    # Nothing was done, the process died before the transaction
     assert client.monitor().messages(QUEUE, NAMESPACE)[0].read
     assert client.monitor().messages(QUEUE, NAMESPACE)[0].actioned
 
